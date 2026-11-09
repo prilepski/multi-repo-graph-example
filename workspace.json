@@ -1,0 +1,27 @@
+{
+  "repos": [
+    {
+      "name": "thingsboard",
+      "cloneUrl": "https://github.com/thingsboard/thingsboard.git",
+      "path": "repos/thingsboard",
+      "shallow": true
+    },
+    {
+      "name": "dolphinscheduler",
+      "cloneUrl": "https://github.com/apache/dolphinscheduler.git",
+      "path": "repos/dolphinscheduler",
+      "shallow": true
+    }
+  ],
+  "settings": {
+    "keepLast": 2,
+    "neo4j": {
+      "boltPort": 7700,
+      "httpPort": 7701,
+      "container": "mrg-example-neo4j",
+      "password": "graphpassword123"
+    },
+    "viewerPort": 7620
+  },
+  "remote": { "push": true }
+}
