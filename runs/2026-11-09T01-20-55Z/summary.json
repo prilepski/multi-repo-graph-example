@@ -1,0 +1,682 @@
+{
+  "run": {
+    "runId": "2026-11-09T01-20-55Z",
+    "started_utc": "2026-11-09T01:20:55.244801+00:00",
+    "finished_utc": "2026-11-09T01:23:15.775655+00:00",
+    "duration_seconds": 140.5,
+    "workspace": "/Users/dmitriprilepski/projects/multi-repo-graph-example",
+    "log_file": "/Users/dmitriprilepski/projects/multi-repo-graph-example/logs/run-20261108-202055.log",
+    "neo4j_uri": "bolt://localhost:7700"
+  },
+  "totals_extracted": {
+    "files": 18815,
+    "types": 17027,
+    "methods": 105160,
+    "fields": 56801,
+    "extends": 6459,
+    "implements": 5005,
+    "imports": 146518,
+    "calls": 380256
+  },
+  "integrations": {},
+  "repos": [
+    {
+      "name": "thingsboard",
+      "path": "/Users/dmitriprilepski/projects/multi-repo-graph-example/repos/thingsboard",
+      "commitSha": "cd259892925ff3cc6709dae021c0d619cfdfbaea",
+      "status": "ok",
+      "extracted": {
+        "files": 13933,
+        "types": 13326,
+        "methods": 84882,
+        "fields": 48042,
+        "extends": 5459,
+        "implements": 4390,
+        "imports": 119094,
+        "calls": 316660,
+        "duplicates_collapsed": 1357,
+        "duplicates_by_metric": {
+          "types": 4,
+          "methods": 1317,
+          "fields": 7,
+          "implements": 1,
+          "imports": 28
+        }
+      },
+      "graph": {
+        "files": 13933,
+        "types": 13326,
+        "methods": 84882,
+        "fields": 48042,
+        "extends": 5459,
+        "implements": 4390,
+        "imports": 119094,
+        "calls": 316660
+      },
+      "validation": {
+        "files": {
+          "expected": 13933,
+          "actual": 13933,
+          "ok": true
+        },
+        "types": {
+          "expected": 13326,
+          "actual": 13326,
+          "ok": true
+        },
+        "methods": {
+          "expected": 84882,
+          "actual": 84882,
+          "ok": true
+        },
+        "fields": {
+          "expected": 48042,
+          "actual": 48042,
+          "ok": true
+        },
+        "extends": {
+          "expected": 5459,
+          "actual": 5459,
+          "ok": true
+        },
+        "implements": {
+          "expected": 4390,
+          "actual": 4390,
+          "ok": true
+        },
+        "imports": {
+          "expected": 119094,
+          "actual": 119094,
+          "ok": true
+        },
+        "calls": {
+          "expected": 316660,
+          "actual": 316660,
+          "ok": true
+        }
+      },
+      "sampled": {
+        "checked": 1000,
+        "failures": [],
+        "ok": true
+      },
+      "loc": 1998136,
+      "inventory": {
+        "coverage": {
+          "filesTracked": 13933,
+          "filesOnDisk": 13937,
+          "untrackedFiles": 4,
+          "filesIndexedDeep": 9889,
+          "filesInventoryOnly": 4044,
+          "binaries": 569
+        },
+        "categories": [
+          {
+            "kind": "artifact",
+            "category": "binary_blob",
+            "files": 79,
+            "bytes": 11118829,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+          },
+          {
+            "kind": "assets",
+            "category": "font",
+            "files": 29,
+            "bytes": 39977744,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+          },
+          {
+            "kind": "assets",
+            "category": "image",
+            "files": 461,
+            "bytes": 13756816,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+          },
+          {
+            "kind": "build",
+            "category": "build_script",
+            "files": 121,
+            "bytes": 769778,
+            "totalLines": 18778,
+            "codeLines": 17716,
+            "commentLines": 231,
+            "blankLines": 831
+          },
+          {
+            "kind": "build",
+            "category": "ci_cd",
+            "files": 3,
+            "bytes": 4226,
+            "totalLines": 151,
+            "codeLines": 118,
+            "commentLines": 13,
+            "blankLines": 20
+          },
+          {
+            "kind": "build",
+            "category": "container",
+            "files": 37,
+            "bytes": 31890,
+            "totalLines": 1078,
+            "codeLines": 843,
+            "commentLines": 63,
+            "blankLines": 172
+          },
+          {
+            "kind": "config",
+            "category": "runtime_config",
+            "files": 98,
+            "bytes": 609066,
+            "totalLines": 10404,
+            "codeLines": 5314,
+            "commentLines": 4430,
+            "blankLines": 660
+          },
+          {
+            "kind": "config",
+            "category": "xml_config",
+            "files": 431,
+            "bytes": 3057468,
+            "totalLines": 59645,
+            "codeLines": 54886,
+            "commentLines": 430,
+            "blankLines": 4329
+          },
+          {
+            "kind": "data",
+            "category": "data_fixture",
+            "files": 836,
+            "bytes": 45320908,
+            "totalLines": 502679,
+            "codeLines": 502676,
+            "commentLines": 0,
+            "blankLines": 3
+          },
+          {
+            "kind": "docs",
+            "category": "documentation",
+            "files": 430,
+            "bytes": 1017173,
+            "totalLines": 27511,
+            "codeLines": 22180,
+            "commentLines": 5,
+            "blankLines": 5326
+          },
+          {
+            "kind": "other",
+            "category": "other",
+            "files": 50,
+            "bytes": 970732,
+            "totalLines": 15968,
+            "codeLines": 13764,
+            "commentLines": 0,
+            "blankLines": 2204
+          },
+          {
+            "kind": "source",
+            "category": "frontend_logic",
+            "files": 2320,
+            "bytes": 16766787,
+            "totalLines": 405496,
+            "codeLines": 354472,
+            "commentLines": 7852,
+            "blankLines": 43172
+          },
+          {
+            "kind": "source",
+            "category": "frontend_markup",
+            "files": 1287,
+            "bytes": 4900085,
+            "totalLines": 107241,
+            "codeLines": 104010,
+            "commentLines": 38,
+            "blankLines": 3193
+          },
+          {
+            "kind": "source",
+            "category": "frontend_style",
+            "files": 747,
+            "bytes": 1119314,
+            "totalLines": 51369,
+            "codeLines": 44435,
+            "commentLines": 2005,
+            "blankLines": 4929
+          },
+          {
+            "kind": "source",
+            "category": "frontend_test",
+            "files": 5,
+            "bytes": 23026,
+            "totalLines": 468,
+            "codeLines": 368,
+            "commentLines": 45,
+            "blankLines": 55
+          },
+          {
+            "kind": "source",
+            "category": "java_backend",
+            "files": 5482,
+            "bytes": 21393408,
+            "totalLines": 466278,
+            "codeLines": 379804,
+            "commentLines": 23391,
+            "blankLines": 63083
+          },
+          {
+            "kind": "source",
+            "category": "java_test",
+            "files": 1427,
+            "bytes": 15248263,
+            "totalLines": 317277,
+            "codeLines": 251249,
+            "commentLines": 15636,
+            "blankLines": 50392
+          },
+          {
+            "kind": "source",
+            "category": "protocol_schema",
+            "files": 14,
+            "bytes": 240723,
+            "totalLines": 5474,
+            "codeLines": 4700,
+            "commentLines": 0,
+            "blankLines": 774
+          },
+          {
+            "kind": "source",
+            "category": "python_script",
+            "files": 8,
+            "bytes": 125423,
+            "totalLines": 2681,
+            "codeLines": 2227,
+            "commentLines": 63,
+            "blankLines": 391
+          },
+          {
+            "kind": "source",
+            "category": "shell_script",
+            "files": 48,
+            "bytes": 73162,
+            "totalLines": 2300,
+            "codeLines": 1889,
+            "commentLines": 7,
+            "blankLines": 404
+          },
+          {
+            "kind": "source",
+            "category": "sql",
+            "files": 20,
+            "bytes": 144543,
+            "totalLines": 3338,
+            "codeLines": 2786,
+            "commentLines": 205,
+            "blankLines": 347
+          }
+        ]
+      },
+      "indexStats": {
+        "filesIndexed": 9888,
+        "nodesCreated": 293614,
+        "edgesCreated": 705177,
+        "ms": 61587
+      },
+      "counts": {
+        "stats": {
+          "nodeCount": 293614,
+          "edgeCount": 705177,
+          "fileCount": 9889
+        },
+        "exported": {
+          "packages": 1340,
+          "types": 13330,
+          "methods": 86199,
+          "fields": 48049,
+          "extends": 5459,
+          "implements": 4391,
+          "packageImports": 22923,
+          "typeImports": 96199,
+          "calls": 316660
+        }
+      },
+      "integrations": []
+    },
+    {
+      "name": "dolphinscheduler",
+      "path": "/Users/dmitriprilepski/projects/multi-repo-graph-example/repos/dolphinscheduler",
+      "commitSha": "0250417c6f961cb832190bbfaa825d9e1ccf2bf1",
+      "status": "ok",
+      "extracted": {
+        "files": 4882,
+        "types": 3701,
+        "methods": 20278,
+        "fields": 8759,
+        "extends": 1000,
+        "implements": 615,
+        "imports": 27424,
+        "calls": 63596,
+        "duplicates_collapsed": 199,
+        "duplicates_by_metric": {
+          "types": 3,
+          "methods": 121,
+          "imports": 75
+        }
+      },
+      "graph": {
+        "files": 4882,
+        "types": 3701,
+        "methods": 20278,
+        "fields": 8759,
+        "extends": 1000,
+        "implements": 615,
+        "imports": 27424,
+        "calls": 63596
+      },
+      "validation": {
+        "files": {
+          "expected": 4882,
+          "actual": 4882,
+          "ok": true
+        },
+        "types": {
+          "expected": 3701,
+          "actual": 3701,
+          "ok": true
+        },
+        "methods": {
+          "expected": 20278,
+          "actual": 20278,
+          "ok": true
+        },
+        "fields": {
+          "expected": 8759,
+          "actual": 8759,
+          "ok": true
+        },
+        "extends": {
+          "expected": 1000,
+          "actual": 1000,
+          "ok": true
+        },
+        "implements": {
+          "expected": 615,
+          "actual": 615,
+          "ok": true
+        },
+        "imports": {
+          "expected": 27424,
+          "actual": 27424,
+          "ok": true
+        },
+        "calls": {
+          "expected": 63596,
+          "actual": 63596,
+          "ok": true
+        }
+      },
+      "sampled": {
+        "checked": 1000,
+        "failures": [],
+        "ok": true
+      },
+      "loc": 452448,
+      "inventory": {
+        "coverage": {
+          "filesTracked": 4882,
+          "filesOnDisk": 4886,
+          "untrackedFiles": 4,
+          "filesIndexedDeep": 3657,
+          "filesInventoryOnly": 1225,
+          "binaries": 473
+        },
+        "categories": [
+          {
+            "kind": "artifact",
+            "category": "binary_blob",
+            "files": 1,
+            "bytes": 50710,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+          },
+          {
+            "kind": "assets",
+            "category": "image",
+            "files": 472,
+            "bytes": 80221454,
+            "totalLines": 0,
+            "codeLines": 0,
+            "commentLines": 0,
+            "blankLines": 0
+          },
+          {
+            "kind": "build",
+            "category": "build_script",
+            "files": 148,
+            "bytes": 575790,
+            "totalLines": 14660,
+            "codeLines": 13353,
+            "commentLines": 192,
+            "blankLines": 1115
+          },
+          {
+            "kind": "build",
+            "category": "ci_cd",
+            "files": 50,
+            "bytes": 139183,
+            "totalLines": 3579,
+            "codeLines": 2369,
+            "commentLines": 896,
+            "blankLines": 314
+          },
+          {
+            "kind": "build",
+            "category": "container",
+            "files": 25,
+            "bytes": 63493,
+            "totalLines": 1790,
+            "codeLines": 1319,
+            "commentLines": 387,
+            "blankLines": 84
+          },
+          {
+            "kind": "build",
+            "category": "iac",
+            "files": 22,
+            "bytes": 49492,
+            "totalLines": 1456,
+            "codeLines": 1336,
+            "commentLines": 0,
+            "blankLines": 120
+          },
+          {
+            "kind": "config",
+            "category": "runtime_config",
+            "files": 181,
+            "bytes": 789131,
+            "totalLines": 22256,
+            "codeLines": 16732,
+            "commentLines": 4095,
+            "blankLines": 1429
+          },
+          {
+            "kind": "config",
+            "category": "xml_config",
+            "files": 92,
+            "bytes": 273643,
+            "totalLines": 6316,
+            "codeLines": 5865,
+            "commentLines": 104,
+            "blankLines": 347
+          },
+          {
+            "kind": "data",
+            "category": "data_fixture",
+            "files": 39,
+            "bytes": 296375,
+            "totalLines": 11823,
+            "codeLines": 11813,
+            "commentLines": 0,
+            "blankLines": 10
+          },
+          {
+            "kind": "docs",
+            "category": "documentation",
+            "files": 507,
+            "bytes": 2215620,
+            "totalLines": 39382,
+            "codeLines": 28318,
+            "commentLines": 0,
+            "blankLines": 11064
+          },
+          {
+            "kind": "other",
+            "category": "other",
+            "files": 31,
+            "bytes": 139232,
+            "totalLines": 3719,
+            "codeLines": 3316,
+            "commentLines": 0,
+            "blankLines": 403
+          },
+          {
+            "kind": "source",
+            "category": "frontend_logic",
+            "files": 583,
+            "bytes": 2175480,
+            "totalLines": 70274,
+            "codeLines": 56392,
+            "commentLines": 9855,
+            "blankLines": 4027
+          },
+          {
+            "kind": "source",
+            "category": "frontend_markup",
+            "files": 1,
+            "bytes": 1306,
+            "totalLines": 35,
+            "codeLines": 18,
+            "commentLines": 16,
+            "blankLines": 1
+          },
+          {
+            "kind": "source",
+            "category": "frontend_style",
+            "files": 39,
+            "bytes": 52344,
+            "totalLines": 1816,
+            "codeLines": 1049,
+            "commentLines": 631,
+            "blankLines": 136
+          },
+          {
+            "kind": "source",
+            "category": "frontend_test",
+            "files": 1,
+            "bytes": 2000,
+            "totalLines": 55,
+            "codeLines": 35,
+            "commentLines": 16,
+            "blankLines": 4
+          },
+          {
+            "kind": "source",
+            "category": "java_backend",
+            "files": 1959,
+            "bytes": 6947358,
+            "totalLines": 169725,
+            "codeLines": 97392,
+            "commentLines": 47118,
+            "blankLines": 25215
+          },
+          {
+            "kind": "source",
+            "category": "java_test",
+            "files": 621,
+            "bytes": 3929926,
+            "totalLines": 89386,
+            "codeLines": 62773,
+            "commentLines": 12783,
+            "blankLines": 13830
+          },
+          {
+            "kind": "source",
+            "category": "protocol_schema",
+            "files": 2,
+            "bytes": 3728,
+            "totalLines": 134,
+            "codeLines": 114,
+            "commentLines": 0,
+            "blankLines": 20
+          },
+          {
+            "kind": "source",
+            "category": "python_script",
+            "files": 8,
+            "bytes": 25905,
+            "totalLines": 738,
+            "codeLines": 476,
+            "commentLines": 135,
+            "blankLines": 127
+          },
+          {
+            "kind": "source",
+            "category": "shell_script",
+            "files": 26,
+            "bytes": 52952,
+            "totalLines": 1531,
+            "codeLines": 1319,
+            "commentLines": 0,
+            "blankLines": 212
+          },
+          {
+            "kind": "source",
+            "category": "sql",
+            "files": 74,
+            "bytes": 782115,
+            "totalLines": 13773,
+            "codeLines": 11375,
+            "commentLines": 1443,
+            "blankLines": 955
+          }
+        ]
+      },
+      "indexStats": {
+        "filesIndexed": 3657,
+        "nodesCreated": 69295,
+        "edgesCreated": 143654,
+        "ms": 13390
+      },
+      "counts": {
+        "stats": {
+          "nodeCount": 69295,
+          "edgeCount": 143654,
+          "fileCount": 3657
+        },
+        "exported": {
+          "packages": 565,
+          "types": 3704,
+          "methods": 20399,
+          "fields": 8759,
+          "extends": 1000,
+          "implements": 615,
+          "packageImports": 2567,
+          "typeImports": 24932,
+          "calls": 63596
+        }
+      },
+      "integrations": []
+    }
+  ],
+  "run_manifest": "/Users/dmitriprilepski/projects/multi-repo-graph-example/logs/runs/2026-11-09T01-20-55Z/run-manifest.json",
+  "overall_ok": true
+}

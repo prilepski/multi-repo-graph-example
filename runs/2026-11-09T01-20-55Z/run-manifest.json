@@ -1,0 +1,47 @@
+{
+  "runId": "2026-11-09T01-20-55Z",
+  "startedAt": "2026-11-09T01:20:55.244801+00:00",
+  "finishedAt": "2026-11-09T01:23:15.775655+00:00",
+  "tools": {
+    "multiRepoGraph": "0.1.0",
+    "codegraph": "1.6.2",
+    "neo4jImage": "neo4j:5-community"
+  },
+  "schemaFingerprint": "6f73261f40603bc3d0df494814c2d57616435e3750af89d06b9a01c54e1c78d0",
+  "repos": [
+    {
+      "name": "thingsboard",
+      "cloneUrl": "https://github.com/thingsboard/thingsboard.git",
+      "commitSha": "cd259892925ff3cc6709dae021c0d619cfdfbaea",
+      "loc": 1998136,
+      "codegraphDb": "codegraphs/thingsboard/codegraph.db.zst",
+      "codegraphDbSha256": "b263cefdb29d118f8e4f7b769917acd3a7cf31979d36e1038a1655c482692f6e",
+      "codegraphDbBytes": 158424603,
+      "nodesExported": 147578,
+      "edgesExported": 445632
+    },
+    {
+      "name": "dolphinscheduler",
+      "cloneUrl": "https://github.com/apache/dolphinscheduler.git",
+      "commitSha": "0250417c6f961cb832190bbfaa825d9e1ccf2bf1",
+      "loc": 452448,
+      "codegraphDb": "codegraphs/dolphinscheduler/codegraph.db.zst",
+      "codegraphDbSha256": "7f6a487e381b6485d88cb72d40c9f0be5ae074c5304cf2edb1cab45f82801ec8",
+      "codegraphDbBytes": 33836297,
+      "nodesExported": 32862,
+      "edgesExported": 92710
+    }
+  ],
+  "neo4j": {
+    "database": "neo4j",
+    "dump": "neo4j/neo4j.dump.zst",
+    "dumpSha256": "ef988bbabfcb7f06e77558786a4e093215c875420e52f7d7f1e6446c3048057a",
+    "dumpBytes": 63643149,
+    "systemDump": "neo4j/system.dump.zst",
+    "systemDumpSha256": "6e81be8d57d0743b73ed5c62207da94cc5a2191b4f697aab5ef037847a1cdbca"
+  },
+  "verification": {
+    "status": "passed",
+    "reportRef": "summary.json"
+  }
+}

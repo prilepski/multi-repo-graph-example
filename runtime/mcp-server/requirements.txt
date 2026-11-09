@@ -1,0 +1,6 @@
+neo4j
+mcp<2
+tree-sitter
+tree-sitter-java
+pytest
+httpx

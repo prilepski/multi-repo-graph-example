@@ -1,0 +1,9 @@
+{
+  "name": "codegraph-workspace-runtime",
+  "private": true,
+  "type": "module",
+  "description": "codegraph SDK for the portfolio fan-out wrapper (installed by runtime/scripts/up.py)",
+  "dependencies": {
+    "@colbymchenry/codegraph": "1.6.2"
+  }
+}
