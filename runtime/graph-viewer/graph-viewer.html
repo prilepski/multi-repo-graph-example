@@ -76,6 +76,13 @@
     background: radial-gradient(ellipse at 50% 42%, #101d38 0%, #0a1224 48%, #05080f 100%);
   }
   #fg { position: absolute; inset: 0; }
+  #fg.lasso-mode canvas { cursor: crosshair !important; }
+  #lasso-canvas { position: absolute; inset: 0; pointer-events: none; z-index: 12; }
+  #sel-pill { display: none; align-items: center; gap: 6px;
+    background: rgba(13,22,40,.85); border: 1px solid #2b4a86;
+    border-radius: 12px; padding: 3px 6px 3px 12px; font-size: 11.5px; }
+  #sel-pill button { font-size: 11px; padding: 3px 9px; }
+  #btn-isolate.active { background: #2b4a86; color: #fff; }
   #fg canvas { outline: none; }
   .star { fill: #dfe9ff; }
   .star.tw { animation: twinkle 3.2s ease-in-out infinite alternate; }
@@ -331,6 +338,11 @@
   </div>
   <span class="crumb" id="crumb" style="display:none">Repositories</span>
   <span class="spacer"></span>
+  <span id="sel-pill" style="display:none">
+    <span id="sel-count">0 selected</span>
+    <button id="btn-isolate" type="button" title="Show only the selected nodes">Isolate</button>
+    <button id="btn-clearsel" type="button" title="Clear selection">&times;</button>
+  </span>
   <button id="btn-anim" class="active" type="button"
           title="Toggle link particle animation">&#9679; Animation</button>
   <button id="btn-up" disabled>&#8593; Level up</button>
@@ -344,11 +356,12 @@
     </div>
     <ul id="tree-root"></ul>
     <ul id="stats-tree-root" style="display:none"></ul>
-    <div class="hint" id="tree-hint">Click: select &amp; details &middot; Double-click: drill down</div>
+    <div class="hint" id="tree-hint"></div>
   </aside>
   <div id="canvas-wrap">
     <button id="panel-toggle" title="Show tree">&#9654; Tree</button>
     <div id="fg"></div>
+    <canvas id="lasso-canvas"></canvas>
     <div id="stats-pane">
       <div class="scope-bar">
         <strong id="stats-scope-label">All repositories</strong>
@@ -452,10 +465,12 @@ function depthOf(eid) {
   return 0.8 + ((h % 100) / 100) * 0.45;
 }
 
+let densityScale = 1;  // 1 for small views, shrinks in dense ones (set per render)
+
 function nodeRadius(node, isFocus) {
   const base = node.label === "Repository" ? 11 : node.label === "Package" ? 8.5
              : node.label === "Type" ? 7 : 5.5;
-  return base * (isFocus ? 1.35 : depthOf(node.eid));
+  return base * (isFocus ? 1.35 : depthOf(node.eid)) * densityScale;
 }
 
 const REL_STYLE = {
@@ -521,8 +536,11 @@ function persistFilter() {
   localStorage.setItem("fg-edges-off", JSON.stringify([...edgeFilterOff]));
 }
 function applyFilters() {
-  graph.nodeVisibility(n => !nodeFilterOff.has(n.label));
-  graph.linkVisibility(l => !edgeFilterOff.has(l.__rel));
+  graph.nodeVisibility(n => !nodeFilterOff.has(n.label)
+                            && !(isolate && !selection.has(n.eid)));
+  graph.linkVisibility(l => !edgeFilterOff.has(l.__rel)
+      && !(isolate && !(selection.has(l.source.eid || l.source)
+                        && selection.has(l.target.eid || l.target))));
 }
 function filterBarVisible() {
   return surface === "graph" && !!window.__fg
@@ -572,6 +590,108 @@ function buildFilterBar() {
     items.appendChild(chip);
   }
 }
+const HINT_TEXT = (/Mac/.test(navigator.platform) ? "\u2318" : "Ctrl+")
+  + "click tree: multi-select \u00b7 Shift+drag canvas: lasso \u00b7 "
+  + "Double-click: drill down";
+document.getElementById("tree-hint").textContent = HINT_TEXT;
+
+/* ---- selection model: lasso (shift+drag on canvas), ctrl+click tree
+   rows, plain click = exclusive single. Isolate turns the selection into
+   a view filter (composes with the filter bar). ---- */
+const selection = new Set();
+let isolate = false;
+function updateSelPill() {
+  const pill = document.getElementById("sel-pill");
+  pill.style.display = selection.size ? "inline-flex" : "none";
+  document.getElementById("sel-count").textContent = selection.size + " selected";
+  document.getElementById("btn-isolate").classList.toggle("active", isolate);
+  document.getElementById("btn-isolate").disabled = !selection.size;
+}
+function setSelection(eids) {
+  selection.clear();
+  for (const e of eids) selection.add(e);
+  selectedEid = eids.length ? eids[eids.length - 1] : null;
+  updateSelPill(); applyFilters();
+}
+document.getElementById("btn-isolate").onclick = () => {
+  isolate = !isolate; updateSelPill(); applyFilters();
+};
+document.getElementById("btn-clearsel").onclick = () => {
+  isolate = false; setSelection([]);
+};
+
+/* lasso: shift+drag draws a polygon on an overlay canvas; release selects
+   every node whose screen position falls inside */
+(function lassoInit() {
+  const overlay = document.getElementById("lasso-canvas");
+  const octx = overlay.getContext("2d");
+  let points = null;
+  window.__lasso = { downs: 0, moves: 0, ups: 0, picked: 0, offsetXY: null };
+  function resize() {
+    overlay.width = overlay.clientWidth; overlay.height = overlay.clientHeight;
+  }
+  window.addEventListener("resize", resize);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Shift") fgElem.classList.add("lasso-mode");
+  });
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "Shift") fgElem.classList.remove("lasso-mode");
+  });
+  // capture-phase on POINTER events: force-graph binds pointerdown and its
+  // preventDefault() cancels the compat mouse events, so a mousedown
+  // listener never fires on real drags (synthetic mouse events DO — which
+  // is why the first test passed while real drags did nothing)
+  fgElem.addEventListener("pointerdown", (e) => {
+    window.__lasso.downs++;
+    if (!e.shiftKey) return;
+    e.stopImmediatePropagation(); e.preventDefault();
+    resize();
+    window.__lasso.offsetXY = [e.offsetX, e.offsetY];
+    points = [{ x: e.offsetX, y: e.offsetY }];
+  }, true);
+  window.addEventListener("pointermove", (e) => {
+    if (!points) return;
+    window.__lasso.moves++;
+    const r = overlay.getBoundingClientRect();
+    points.push({ x: e.clientX - r.left, y: e.clientY - r.top });
+    octx.clearRect(0, 0, overlay.width, overlay.height);
+    octx.strokeStyle = "rgba(255,196,80,.95)"; octx.lineWidth = 2.5;
+    octx.setLineDash([]);
+    octx.beginPath();
+    octx.moveTo(points[0].x, points[0].y);
+    for (const p of points.slice(1)) octx.lineTo(p.x, p.y);
+    octx.stroke();
+    octx.fillStyle = "rgba(255,196,80,.12)";
+    octx.fill();
+  });
+  window.addEventListener("pointerup", () => {
+    if (!points) return;
+    window.__lasso.ups++;
+    const poly = points; points = null;
+    octx.clearRect(0, 0, overlay.width, overlay.height);
+    const inside = (px, py) => {   // ray casting
+      let hit = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const a = poly[i], b = poly[j];
+        if ((a.y > py) !== (b.y > py) &&
+            px < (b.x - a.x) * (py - a.y) / (b.y - a.y) + a.x) hit = !hit;
+      }
+      return hit;
+    };
+    const picked = [];
+    for (const n of graph.graphData().nodes) {
+      const p = graph.graph2ScreenCoords(n.x, n.y);
+      if (inside(p.x, p.y)) picked.push(n.eid);
+    }
+    window.__lasso.picked = picked.length;
+    if (picked.length) {
+      isolate = true;              // release = render only the selection,
+      setSelection(picked);        // edges among selected nodes survive
+      toast("Isolated " + picked.length + " nodes — Reset or \u2191 Level up to exit");
+    }
+  });
+})();
+
 document.getElementById("fb-mode-nodes").onclick = () => {
   filterMode = "nodes"; localStorage.setItem("fg-filter-mode", "nodes"); buildFilterBar();
 };
@@ -584,16 +704,22 @@ function paintNode(n, ctx, globalScale) {
   const color = colorFor(n.label);
   const r = nodeRadius(n, isFocus);
   ctx.save();
-  ctx.shadowBlur = 9; ctx.shadowColor = color;
+  ctx.shadowBlur = Math.max(3.5, 9 * densityScale); ctx.shadowColor = color;
   ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, 2 * Math.PI);
   ctx.fillStyle = color; ctx.fill();
   ctx.restore();
-  if (n.eid === selectedEid) {
-    ctx.beginPath(); ctx.arc(n.x, n.y, r + 3.5, 0, 2 * Math.PI);
-    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 1.4; ctx.stroke();
+  if (selection.has(n.eid)) {
+    const isLast = n.eid === selectedEid;
+    ctx.beginPath(); ctx.arc(n.x, n.y, r + (isLast ? 4.5 : 3), 0, 2 * Math.PI);
+    ctx.strokeStyle = isLast ? "#ffffff" : "rgba(232,182,76,.85)";
+    ctx.lineWidth = isLast ? 2 : 1.3; ctx.stroke();
   }
-  const showLabel = isFocus || globalScale > 0.85 ||
-                    n.label === "Repository" || n.label === "Package";
+  // tiered labels: coarse zoom shows structure; members appear when zoomed
+  const threshold = n.label === "Type" ? 1.0
+                  : (n.label === "Method" || n.label === "Field"
+                     || n.label === "CallTarget") ? 2.2 : 0.85;
+  const showLabel = isFocus || n.label === "Repository" || n.label === "Package"
+                 || globalScale > threshold;
   if (showLabel) {
     ctx.font = `${(isFocus ? 11.5 : 10) / globalScale}px -apple-system,system-ui,sans-serif`;
     ctx.textAlign = "center";
@@ -606,7 +732,8 @@ let clickTimer = null;   // click-select vs dblclick-drill disambiguation
 let lastNodeClick = { eid: null, t: 0 };
 
 const graph = ForceGraph()(fgElem)
-  .maxZoom(1.8)
+  .maxZoom(8)   // deep zoom for label reading; auto-fit stays sane via
+                // deterministic layouts (fixed ring + radial seeds)
   .backgroundColor("#0a1224")
   .nodeLabel(n => `${n.label}: ${n.name}` + (n.file ? `\nfile: ${n.file}` : ""))
   .linkLabel(l => l.__label || "")
@@ -624,7 +751,11 @@ const graph = ForceGraph()(fgElem)
     lastNodeClick = { eid: node.eid, t: now };
     clearTimeout(clickTimer);
     if (isDbl) { clickTimer = null; drillDown(node.eid); return; }
-    clickTimer = setTimeout(() => selectNode(node.eid, ev), 260);
+    clickTimer = setTimeout(() => {
+      isolate = false;
+      setSelection([node.eid]);
+      selectNode(node.eid, ev);
+    }, 260);
   })
   .linkCurvature(0.18)
   .linkColor(l => l.__style.color)
@@ -772,6 +903,7 @@ function drawRootOverview() {
              x: fx, y: fy, fx, fy };
   });
   const byEid = new Set(nodes.map(n => n.eid));
+  densityScale = Math.max(0.5, Math.min(1, Math.sqrt(60 / roots.length)));
   const links = integrations
     .filter(i => byEid.has(i.srcEid) && byEid.has(i.dstEid))
     .map(i => {
@@ -812,17 +944,21 @@ function renderNeighborhood(data) {
   const seed = { x: 0, y: 0 };
   let angle = -Math.PI / 2;
   const total = data.nodes.length || 1;
+  // ring radius grows with node count: a fixed ring packs 150 nodes at
+  // ~11px spacing (unreadable overlap); sqrt(N) keeps ~30px+ per node
+  const R0 = 200 + 40 * Math.sqrt(total);
   for (const key of Object.keys(groups).sort()) {
     const g = groups[key];
     const sweep = (g.length / total) * Math.PI * 1.7;
     g.forEach((n, i) => {
       const t = g.length === 1 ? 0.5 : i / (g.length - 1);
       const a = angle + t * sweep;
-      const r = 220 + 90 * ((i % 3) / 2);
+      const r = R0 + 130 * ((i % 3) / 2);
       seed[n.eid] = { x: r * Math.cos(a), y: r * Math.sin(a) };
     });
     angle += sweep + 0.25;
   }
+  densityScale = Math.max(0.5, Math.min(1, Math.sqrt(60 / total)));
   const nodes = [{ id: data.focus.eid, eid: data.focus.eid,
                    name: data.focus.name, label: data.focus.label,
                    x: 0, y: 0, __focus: true }]
@@ -884,6 +1020,7 @@ async function selectNode(eid, ev) {
 let treeMode = "packages";
 
 async function loadRootOverview() {
+  isolate = false; selection.clear(); updateSelPill();
   const roots = await api("/api/root?mode=" + treeMode);
   current = null; drillStack = []; selectedEid = null;
   document.getElementById("btn-up").disabled = true;
@@ -906,6 +1043,7 @@ document.getElementById("mode-packages").addEventListener("click", () => switchM
 document.getElementById("mode-files").addEventListener("click", () => switchMode("files"));
 
 async function drillDown(eid) {
+  isolate = false; selection.clear(); updateSelPill();  // fresh view
   let data;
   const depth = treeMode === "files" ? 2 : 1;
   try {
@@ -923,6 +1061,7 @@ async function drillDown(eid) {
 }
 
 async function levelUp() {
+  isolate = false; selection.clear(); updateSelPill();
   if (!drillStack.length) { await loadRootOverview(); return; }
   const prev = drillStack.pop();
   current = prev;
@@ -966,9 +1105,23 @@ function treeRow(node) {
   childUl.style.display = "none";
   li.appendChild(childUl);
 
+  const toggleSelect = () => {
+    if (selection.has(node.eid)) selection.delete(node.eid);
+    else selection.add(node.eid);
+    selectedEid = node.eid;
+    updateSelPill(); applyFilters();
+  };
   row.addEventListener("click", (e) => {
+    if (e.ctrlKey || e.metaKey) { toggleSelect(); return; }  // multi-select
     highlightTree(node.eid);
     selectNode(node.eid, e);
+  });
+  // macOS: Ctrl+Click is RIGHT-CLICK (button 2 + contextmenu, no click
+  // event) — claim that gesture for multi-select instead of the menu
+  row.addEventListener("contextmenu", (e) => {
+    if (!e.ctrlKey) return;               // plain right-click stays native
+    e.preventDefault();
+    toggleSelect();
   });
   row.addEventListener("dblclick", () => drillDown(node.eid));
   chev.addEventListener("click", async (e) => {
@@ -1192,7 +1345,7 @@ function setSurface(which) {
   document.getElementById("tree-root").style.display = which === "statistics" ? "none" : "block";
   document.getElementById("stats-tree-root").style.display = which === "statistics" ? "block" : "none";
   document.getElementById("tree-hint").textContent = which === "statistics"
-    ? "Click: scope statistics to this folder" : "Click: select & details · Double-click: drill down";
+    ? "Click: scope statistics to this folder" : HINT_TEXT;
   showFilterBar();  // filter bar lives on the graph surface (any depth)
   showRepoFilter(); // repo selector likewise
   if (which === "statistics") {
